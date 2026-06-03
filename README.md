@@ -28,11 +28,12 @@ AI Resume Analyzer is a Streamlit-based NLP and RAG application that analyzes re
 - python-docx
 - Scikit-learn
 
+
 ## Project Structure
 
 ```text
 resume-analyzer/
-│
+│__.github
 ├── app.py
 ├── utils.py
 ├── llm.py

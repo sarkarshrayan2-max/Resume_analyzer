@@ -5,7 +5,7 @@ from utils import (
     extract_text_from_docx
 )
 
-from llm import extract_skills_list, generate_match_explanation
+from llm import extract_skills_list, generate_match_explanation,  predict_career_field
 from rag import create_vector_store, answer_resume_question
 
 from matcher import (
@@ -60,11 +60,12 @@ if uploaded_resume:
 
     st.success("Resume uploaded and text extracted successfully.")
 
-    tab1, tab2, tab3 = st.tabs([
-        "📄 Resume Text",
-        "🎯 Job Match",
-        "💬 Resume Q&A"
-    ])
+    tab1, tab2, tab3, tab4 = st.tabs([
+    "📄 Resume Text",
+    "🎯 Job Match",
+    "💬 Resume Q&A",
+    "🚀 Career Path Predictor"
+])
 
     with tab1:
         st.subheader("Extracted Resume Text")
@@ -189,9 +190,21 @@ if uploaded_resume:
                         st.session_state.vector_store,
                         question
                     )
-
                 st.subheader("Answer")
                 st.write(answer)
+    with tab4:
+        st.subheader("Career Path Predictor")
+
+        st.write(
+            "Use this if you do not have a job description and want AI to suggest the best career direction based on your resume."
+        )
+
+        if st.button("Predict Best Career Path"):
+            with st.spinner("Analyzing resume and predicting career path..."):
+                career_result = predict_career_field(resume_text)
+
+                st.subheader("Career Recommendation")
+                st.write(career_result)
 
 else:
     st.info("Please upload a PDF or DOCX resume to begin.")

@@ -3,8 +3,7 @@ import json
 from langchain_core.output_parsers import StrOutputParser
 
 from config import get_llm
-from prompts import skill_extraction_prompt, match_explanation_prompt
-
+from prompts import skill_extraction_prompt, match_explanation_prompt,career_prediction_prompt
 
 def extract_skills_list(text):
     llm = get_llm()
@@ -19,6 +18,16 @@ def extract_skills_list(text):
 
     return [skill.lower().strip() for skill in data["skills"]]
 
+def predict_career_field(resume_text):
+    llm = get_llm()
+
+    chain = career_prediction_prompt | llm | StrOutputParser()
+
+    response = chain.invoke({
+        "resume_text": resume_text
+    })
+
+    return response
 
 def generate_match_explanation(
     resume_text,

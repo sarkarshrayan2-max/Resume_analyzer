@@ -355,7 +355,8 @@ if uploaded_resume:
 
                 if matched:
                     for skill in matched:
-                        st.success(skill)
+                        display_skill = skill.split("↔")[0].strip()
+                        st.success(display_skill)
                 else:
                     st.warning("No matching skills found.")
 

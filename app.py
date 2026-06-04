@@ -1,11 +1,18 @@
 import streamlit as st
 import re
+
 from utils import (
     extract_text_from_pdf,
     extract_text_from_docx
 )
 
-from llm import extract_skills_list, generate_match_explanation,  predict_career_field,extract_market_skills
+from llm import (
+    extract_skills_list,
+    generate_match_explanation,
+    predict_career_field,
+    extract_market_skills
+)
+
 from rag import create_vector_store, answer_resume_question
 
 from matcher import (
@@ -13,11 +20,32 @@ from matcher import (
     calculate_semantic_similarity,
     calculate_final_score
 )
+
 from job_market import (
     fetch_jobs,
     combine_job_descriptions,
     calculate_market_fit
 )
+
+
+def extract_best_target_role(career_result):
+    lines = career_result.splitlines()
+
+    for line in lines:
+        clean_line = line.strip().replace("*", "")
+
+        if "best target role" in clean_line.lower():
+            if ":" in clean_line:
+                role = clean_line.split(":", 1)[1].strip()
+
+                role = role.replace('"', "").replace("'", "").strip()
+
+                if role:
+                    return role
+
+    return ""
+
+
 st.set_page_config(
     page_title="AI Resume Analyzer",
     page_icon="📄",
@@ -34,11 +62,15 @@ with st.sidebar:
     - Semantic similarity
     - Missing skill detection
     - Resume Q&A using RAG
+    - Career path prediction
+    - Live job market analysis
     - FAISS vector search
     """)
 
 st.title("📄 AI Resume Analyzer")
-st.write("Upload a resume, compare it with a job description, and ask questions using RAG.")
+st.write(
+    "Upload a resume, compare it with a job description, ask questions using RAG, and analyze live job market demand."
+)
 
 if "vector_store" not in st.session_state:
     st.session_state.vector_store = None
@@ -71,12 +103,12 @@ if uploaded_resume:
     st.success("Resume uploaded and text extracted successfully.")
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📄 Resume Text",
-    "🎯 Job Match",
-    "💬 Resume Q&A",
-    "🚀 Career Path Predictor",
-    "📈 Market Analysis"
-])
+        "📄 Resume Text",
+        "🎯 Job Match",
+        "💬 Resume Q&A",
+        "🚀 Career Path Predictor",
+        "📈 Market Analysis"
+    ])
 
     with tab1:
         st.subheader("Extracted Resume Text")
@@ -201,8 +233,10 @@ if uploaded_resume:
                         st.session_state.vector_store,
                         question
                     )
+
                 st.subheader("Answer")
                 st.write(answer)
+
     with tab4:
         st.subheader("Career Path Predictor")
 
@@ -211,29 +245,23 @@ if uploaded_resume:
         )
 
         if st.session_state.career_result:
-
             st.subheader("Last Career Analysis")
-            
             st.write(st.session_state.career_result)
+
+            if st.session_state.predicted_role:
+                st.success(
+                    f"Current Suggested Role: {st.session_state.predicted_role}"
+                )
 
         if st.button("Predict Best Career Path"):
 
             with st.spinner("Analyzing resume and predicting career path..."):
                 career_result = predict_career_field(resume_text)
 
+            predicted_role = extract_best_target_role(career_result)
+
             st.session_state.career_result = career_result
-
-            predicted_role = ""
-
-            match = re.search(
-                r"Best Target Role\s*:\s*(.+)",
-                career_result,
-                re.IGNORECASE
-            )
-
-            if match:
-                predicted_role = match.group(1).strip()
-                st.session_state.predicted_role = predicted_role
+            st.session_state.predicted_role = predicted_role
 
             st.subheader("AI Career Path Analysis")
             st.write(career_result)
@@ -244,21 +272,34 @@ if uploaded_resume:
                 )
             else:
                 st.warning(
-                    "Could not extract a target role from the AI response."
+                    "Could not extract a target role from the AI response. You can still type a role manually in Market Analysis."
                 )
+
     with tab5:
         st.subheader("Live Job Market Analysis")
 
         st.write(
-            "Enter a target role manually, or use the Career Path Predictor tab to decide which role to analyze."
+            "Use the predicted role from Career Path Predictor or enter a target role manually."
         )
 
         role = st.text_input(
             "Target Role",
-            value=st.session_state.predicted_role
+            value=st.session_state.predicted_role,
+            placeholder="Example: Machine Learning Engineer"
         )
 
+        if not role.strip():
+            st.info(
+                "No target role selected yet. Go to Career Path Predictor first or type a role manually."
+            )
+
         if st.button("Analyze Market Demand"):
+
+            if not role.strip():
+                st.warning(
+                    "Please enter a target role or generate one from the Career Path Predictor."
+                )
+                st.stop()
 
             with st.spinner("Fetching current job market data..."):
 
@@ -334,5 +375,6 @@ if uploaded_resume:
             with st.expander("View Current Market Skills"):
                 for skill in market_skills:
                     st.info(skill)
+
 else:
     st.info("Please upload a PDF or DOCX resume to begin.")

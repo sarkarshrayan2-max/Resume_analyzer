@@ -1,4 +1,4 @@
-# 📄 AI Resume Analyzer & Career Advisor
+#  AI Resume Analyzer & Career Advisor
 
 An AI-powered Resume Analyzer built using Streamlit, LangChain, Groq, FAISS, Sentence Transformers, and Adzuna Job Market API.
 
@@ -15,21 +15,21 @@ The application helps users:
 
 ---
 
-## 🚀 Features
+##  Features
 
-### 📄 Resume Parsing
+###  Resume Parsing
 
 * Upload PDF resumes
 * Upload DOCX resumes
 * Automatic text extraction
 
-### 🧠 AI Skill Extraction
+###  AI Skill Extraction
 
 * Uses Groq LLM
 * Extracts technical and soft skills
 * Returns structured skill lists
 
-### 🎯 ATS Job Matching
+###  ATS Job Matching
 
 * Compare resume against any job description
 * Skill match scoring
@@ -38,7 +38,7 @@ The application helps users:
 * Missing skill detection
 * AI-generated match explanation
 
-### 💬 Resume Q&A (RAG)
+###  Resume Q&A (RAG)
 
 * FAISS Vector Database
 * HuggingFace Embeddings
@@ -50,7 +50,7 @@ Ask questions like:
 * What programming languages does the candidate know?
 * Does the candidate have machine learning experience?
 
-### 🚀 Career Path Predictor
+###  Career Path Predictor
 
 Analyze:
 
@@ -68,7 +68,7 @@ Predict:
 * Learning Roadmap
 * Next Project Suggestions
 
-### 📈 Live Job Market Analysis
+###  Live Job Market Analysis
 
 Powered by Adzuna API.
 
@@ -83,7 +83,7 @@ Features:
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Frontend
 
@@ -124,27 +124,11 @@ Features:
 
 ---
 
-## 📂 Project Structure
 
-```text
-resume_analyzer/
-│
-├── app.py
-├── config.py
-├── llm.py
-├── matcher.py
-├── rag.py
-├── prompts.py
-├── job_market.py
-├── utils.py
-├── requirements.txt
-├── .gitignore
-└── README.md
-```
 
 ---
 
-## ⚙️ Environment Variables
+##  Environment Variables
 
 Create a `.env` file:
 
@@ -158,7 +142,7 @@ ADZUNA_APP_KEY=your_adzuna_app_key
 
 ---
 
-## ▶️ Run Locally
+##  Run Locally
 
 Install dependencies:
 
@@ -174,7 +158,7 @@ streamlit run app.py
 
 ---
 
-## 🔄 CI/CD
+##  CI/CD
 
 GitHub Actions automatically:
 
@@ -189,7 +173,7 @@ Runs on:
 
 ---
 
-## 📌 Future Improvements
+##  Future Improvements
 
 * JSON-based career prediction output
 * Resume improvement recommendations
